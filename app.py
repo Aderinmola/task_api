@@ -65,6 +65,28 @@ def add_task():
     else:
         return "Task already exist!!!"
 
+
+# Get All Tasks
+@app.route('/tasks', methods=['GET'])
+def get_tasks():
+
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 5, type=int)
+    all_tasks = Task.query.paginate(page=page, per_page=per_page)
+
+    meta={
+        "page": all_tasks.page,
+        "pages": all_tasks.pages,
+        "total_count": all_tasks.total,
+        "prev_page": all_tasks.prev_num,
+        "next_page": all_tasks.next_num,
+        "has_next": all_tasks.has_next,
+        "has_prev": all_tasks.has_prev,
+    }
+    result = tasks_schema.dump(all_tasks)
+
+    return jsonify({'data': result, 'meta': meta})
+
 if __name__ == '__main__':
     app.run(debug=True)
 
