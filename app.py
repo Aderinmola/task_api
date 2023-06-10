@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 import os
 from datetime import datetime
+from flask_migrate import Migrate
 
 
 # Init app
@@ -16,6 +17,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 #referencing SQLAlchemcy
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 #referencing marshmallow
 ma = Marshmallow(app)
@@ -133,4 +135,3 @@ def delete_task(id):
 
 if __name__ == '__main__':
     app.run(debug=True)
-
