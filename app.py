@@ -20,6 +20,7 @@ db = SQLAlchemy(app)
 #referencing marshmallow
 ma = Marshmallow(app)
 
+
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), unique=True)
@@ -43,6 +44,26 @@ class TaskSchema(ma.Schema):
 task_schema = TaskSchema()
 tasks_schema = TaskSchema(many=True)
 
+# Create a Task
+@app.route('/task', methods=['POST'])
+def add_task():
+    default_date = "2023-06-03T15:11:16"
+
+    title = request.json['title']
+    description = request.json['description']
+    due_date = datetime.fromisoformat(request.json.get('due_date', default_date))
+    status = request.json['status']
+
+    if status not in ['incomplete', 'inprogress', 'completed']:
+        return "Task status is not valid!!!"
+
+    new_task = Task(title, description, due_date, status)
+    if Task.query.filter_by(title=title).count() == 0:
+        db.session.add(new_task)
+        db.session.commit()
+        return task_schema.jsonify(new_task)
+    else:
+        return "Task already exist!!!"
 
 if __name__ == '__main__':
     app.run(debug=True)
