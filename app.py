@@ -87,6 +87,16 @@ def get_tasks():
 
     return jsonify({'data': result, 'meta': meta})
 
+#get a particular task
+@app.route('/task/<id>', methods=['GET'])
+def singleTask(id):
+    single_task = Task.query.get(id)
+    if single_task != None:
+        return task_schema.jsonify(single_task)
+    else:
+        return "Task does not exist!!!"
+    
+
 if __name__ == '__main__':
     app.run(debug=True)
 
