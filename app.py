@@ -96,6 +96,30 @@ def singleTask(id):
     else:
         return "Task does not exist!!!"
     
+# Update a Task
+@app.route('/task/<id>', methods=['PUT'])
+def update_task(id):
+    task = Task.query.get(id)
+
+    default_date = "2023-06-03T15:11:16"
+
+
+    if task != None:
+        title = request.json['title']
+        description = request.json['description']
+        due_date = datetime.fromisoformat(request.json.get('due_date', default_date))
+        status = request.json['status']
+
+        task.title = title
+        task.description = description
+        task.due_date = due_date
+        task.status = status
+
+        db.session.commit()
+        return task_schema.jsonify(task)
+    else:
+        return "Task does not exist!!!"
+    
 
 if __name__ == '__main__':
     app.run(debug=True)
